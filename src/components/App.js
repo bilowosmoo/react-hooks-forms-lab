@@ -1,20 +1,34 @@
 import React, { useState } from "react";
-import ShoppingList from "./ShoppingList";
-import Header from "./Header";
-import itemData from "../data/items";
+import ItemForm from "./ItemForm";
+import Filter from "./Filter";
+import ItemList from "./ItemList";
+import { v4 as uuid } from "uuid";
 
 function App() {
-  const [items, setItems] = useState(itemData);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [items, setItems] = useState([
+    { id: uuid(), name: "Apples", category: "Produce" },
+    { id: uuid(), name: "Milk", category: "Dairy" },
+    { id: uuid(), name: "Bread", category: "Bakery" },
+  ]);
+  const [search, setSearch] = useState("");
 
-  function handleDarkModeClick() {
-    setIsDarkMode((isDarkMode) => !isDarkMode);
+  function handleAddItem(newItem) {
+    setItems([...items, newItem]);
   }
 
+  function handleSearchChange(newSearch) {
+    setSearch(newSearch);
+  }
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className={"App " + (isDarkMode ? "dark" : "light")}>
-      <Header isDarkMode={isDarkMode} onDarkModeClick={handleDarkModeClick} />
-      <ShoppingList items={items} />
+    <div className="App">
+      <ItemForm onItemFormSubmit={handleAddItem} />
+      <Filter search={search} onSearchChange={handleSearchChange} />
+      <ItemList items={filteredItems} />
     </div>
   );
 }
